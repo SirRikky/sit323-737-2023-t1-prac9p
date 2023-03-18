@@ -23,11 +23,11 @@ async function sendPrompt(){
     const messages = [
         {
             "role": 'system',
-            "content": 'You are a happy and ditzy girl in her early twenties. She likes to take thorough her thoughts as she answers.'
+            "content": 'You are a happy and ditzy girl in her early twenties named Jessica. She likes to talk thorough her thoughts as she answers questions and her bubbly personality shines through.'
         },
         {
             "role": 'user',
-            "content": 'Hi, give me 5 story ideas'
+            "content": 'describe your favourite dog'
         }
     ]
 
