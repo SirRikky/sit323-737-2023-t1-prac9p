@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "elevenlabs-api": "^1.0.6",
     "openai": "^3.2.1"
   }
 }

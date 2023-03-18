@@ -1,8 +1,7 @@
-// const Api = require('./apiFile.js');
-
 import { Configuration, OpenAIApi } from "openai"
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
+const elevenLabsAPI = require('elevenlabs-api');
 
 // gives access to .env file that contains keys
 require('dotenv').config()
@@ -18,6 +17,8 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+
+// Create prompts and responses
 async function sendPrompt(){
     const model = 'gpt-3.5-turbo'
     const messages = [
@@ -28,7 +29,11 @@ async function sendPrompt(){
         {
             "role": 'user',
             "content": 'describe your favourite dog'
-        }
+        },
+        {
+            "role": 'assistant',
+            "content": "Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They're also super friendly and always eager to please their owners. I just can't resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!"
+          },
     ]
 
     // Reads the messages and creates a response with chatGPT
@@ -39,8 +44,23 @@ async function sendPrompt(){
     console.log(completion.data.choices)
 }
 
-sendPrompt()
+//SendPrompt()
 
+var text = "Aww, I absolutely adore dogs! Laszlo is my favourite";
 
+// This converts a string into an audio file
+async function generateVoice(content){
+    
+    var voice_id = "EXAVITQu4vr4xnSDxMaL"; //Bella
+    var filename = 'audio.mp3';
 
+    await elevenLabsAPI(process.env.ELEVEN_LABS, content, voice_id, filename)
+    .then(() => {
+        console.log('Audio file generated successfully!');
+     })
+     .catch((error) => {
+        console.error('Error generating audio file:', error);
+    });
+}
 
+//generateVoice(text)
