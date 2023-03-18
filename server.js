@@ -1,7 +1,6 @@
 import { Configuration, OpenAIApi } from "openai"
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
-const elevenLabsAPI = require('elevenlabs-api');
 
 // gives access to .env file that contains keys
 require('dotenv').config()
@@ -17,7 +16,17 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+const elevenLabsAPI = require('elevenlabs-api');
+// This needs to have a key in the .env file otherwise add one manually
+const elevenLabsKey = process.env.ELEVEN_LABS
+// const elevenLabsKey = ""
 
+// Checks keys are all there
+if (elevenLabsKey === undefined || configuration.apiKey === undefined){
+    console.log("Error: One or more keys are missing.")
+    console.log("Check .env file or add the keys manually.")
+}
+    
 // Create prompts and responses
 async function sendPrompt(){
     const model = 'gpt-3.5-turbo'
@@ -54,7 +63,7 @@ async function generateVoice(content){
     var voice_id = "EXAVITQu4vr4xnSDxMaL"; //Bella
     var filename = 'audio.mp3';
 
-    await elevenLabsAPI(process.env.ELEVEN_LABS, content, voice_id, filename)
+    await elevenLabsAPI(elevenLabsKey, content, voice_id, filename)
     .then(() => {
         console.log('Audio file generated successfully!');
      })
