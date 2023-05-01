@@ -16,7 +16,7 @@ require('dotenv').config()
 const configuration = new Configuration({
     // This key is in the .env file
     apiKey: process.env.CHAT_GPT
-    // Change this to the key with quotes for example apiKey: "aaabbbccc123"
+    // Change this to the key with quotes for example apiKey: "aaabbbccc1docker run23"
     // apiKey: ""
 });
 
@@ -118,3 +118,4 @@ app.listen(port, () => {
 })
 
 
+//test
