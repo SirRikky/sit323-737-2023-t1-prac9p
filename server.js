@@ -7,7 +7,6 @@ const app = express();
 const bodyParser = require('body-parser')
 const port = 3000;
 
-
 // gives access to .env file that contains keys
 require('dotenv').config()
 
@@ -34,7 +33,7 @@ if (elevenLabsKey === undefined || configuration.apiKey === undefined){
 }
 
 
-var messages = [
+var allMessages = [
     {
         "role": 'system',
         "content": 'You are a happy and ditzy girl in her early twenties named Jessica. She likes to talk thorough her thoughts as she answers questions and her bubbly personality shines through.'
@@ -45,7 +44,15 @@ var messages = [
     },
     {
         "role": 'assistant',
-        "content": "Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They're also super friendly and always eager to please their owners. I just can't resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!"
+        "content": 'Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They\'re also super friendly and always eager to please their owners. I just can\'t resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!'
+    },
+    {
+        "role": 'user',
+        "content": 'Mine is my dog Laszlo he\'s a Hungarian Viszla'
+    },
+    {
+        "role": 'assistant',
+        "content": 'Laszlo sounds great'
     },
 ]
 
@@ -53,20 +60,6 @@ var messages = [
 // Create prompts and responses
 async function sendPrompt(){
     const model = 'gpt-3.5-turbo'
-    // const messages = [
-    //     {
-    //         "role": 'system',
-    //         "content": 'You are a happy and ditzy girl in her early twenties named Jessica. She likes to talk thorough her thoughts as she answers questions and her bubbly personality shines through.'
-    //     },
-    //     {
-    //         "role": 'user',
-    //         "content": 'describe your favourite dog'
-    //     },
-    //     {
-    //         "role": 'assistant',
-    //         "content": "Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They're also super friendly and always eager to please their owners. I just can't resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!"
-    //     },
-    // ]
 
     // Reads the messages and creates a response with chatGPT
     const completion = await openai.createChatCompletion({
@@ -97,25 +90,79 @@ async function generateVoice(content){
 
 //generateVoice(text)
 
+function generateMessageHTML(messages) {
+    let result = "";
+    for (let i = 0; i < messages.length; i++) {
+        let messageClass = messages[i].role === "user" ? "user-message" : "assistant-message";
+        result += `<div class="chat-container ${messageClass}"><strong>${messages[i].role}:</strong> ${messages[i].content}</div><br>`;
+    }
+    return result;
+}
+
+// function sendMessage(){
+//     console.log("button clicked")
+// }
+
+// Generates the HTML for the page
+function generateHTML() {
+    let filteredMessages = allMessages.filter(message => message.role !== 'system');
+
+    let html = `
+        <html>
+            <head>
+                <title>Messages</title>
+                <style>
+                    body {
+                        background-color: #f2f2f2;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                    }
+                    .container {
+                        max-width: 80%;
+                        padding: 0 10%;
+                    }
+                    .chat-container {
+                        background-color: #fff;
+                        border-radius: 10px;
+                        padding: 10px;
+                        margin: 10px 0;
+                        display: inline-block;
+                        max-width: 100%;
+                    }
+                    .user-message {
+                        background-color: #b3e6ff;
+                        float: right;
+                    }
+                    .input-container {
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    ${generateMessageHTML(filteredMessages)}
+                    <div class="input-container">
+                        <input type="text" id="message-input">
+                        <button id="send-button">Send</button>
+                    </div>
+                </div>
+            </body>
+        </html>
+    `;
+    return html;
+}
 
 app.get('/', (req, res) => {
-
-    //res.status(200).json({statuscode:200, data: "Hello World"});
     
-    // Sends the content of the message with index 1
-    res.send(messages[1]["content"]);
-
-
-
+    const html = generateHTML();
+    res.send(html);
 
 });
-
-
-
 
 app.listen(port, () => {
     console.log("Hello i'm listening to port " + port);
 })
 
-
-//test
