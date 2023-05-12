@@ -7,6 +7,45 @@ const app = express();
 const bodyParser = require('body-parser')
 const port = 3000;
 
+var allMessages = []
+
+// Mongodb
+const MongoClient = require('mongodb').MongoClient;
+const uri = 'mongodb://mongo:27017/MYDB';
+const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Connection URL
+const url = 'mongodb://mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/MYDB?replicaSet=rs0';
+
+// Database Name
+const dbName = 'MYDB';
+
+// Connect to the MongoClient
+client.connect(function(err) {
+    if(err) {
+      console.log(err);
+      return;
+    }
+    console.log("Connected successfully to server");
+
+    // Get a reference to the "voiceCollection" collection
+    const voiceCollection = client.db(dbName).collection("voiceCollection");
+
+    // Find all documents in the "voiceCollection" collection and assign them to the "allMessages" variable
+    voiceCollection.find({}).toArray(function(err, result) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log("Found " + result.length + " documents in the voiceCollection collection.");
+    console.log(result);
+    allMessages = result;
+  });
+});
+
+
+
+
 // gives access to .env file that contains keys
 require('dotenv').config()
 
@@ -33,28 +72,28 @@ if (elevenLabsKey === undefined || configuration.apiKey === undefined){
 }
 
 
-var allMessages = [
-    {
-        "role": 'system',
-        "content": 'You are a happy and ditzy girl in her early twenties named Jessica. She likes to talk thorough her thoughts as she answers questions and her bubbly personality shines through.'
-    },
-    {
-        "role": 'user',
-        "content": 'describe your favourite dog'
-    },
-    {
-        "role": 'assistant',
-        "content": 'Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They\'re also super friendly and always eager to please their owners. I just can\'t resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!'
-    },
-    {
-        "role": 'user',
-        "content": 'Mine is my dog Laszlo he\'s a Hungarian Viszla'
-    },
-    {
-        "role": 'assistant',
-        "content": 'Laszlo sounds great'
-    },
-]
+// var allMessages = [
+//     {
+//         "role": 'system',
+//         "content": 'You are a happy and ditzy girl in her early twenties named Jessica. She likes to talk thorough her thoughts as she answers questions and her bubbly personality shines through.'
+//     },
+//     {
+//         "role": 'user',
+//         "content": 'describe your favourite dog'
+//     },
+//     {
+//         "role": 'assistant',
+//         "content": 'Aww, I absolutely adore dogs! My favorite dog breed is definitely the Golden Retriever. They are just the sweetest and most loyal dogs ever! I love their fluffy golden fur and their big, loving eyes. They\'re also super friendly and always eager to please their owners. I just can\'t resist their cute little wagging tails and adorable goofy smiles. Plus, they make great family pets and are excellent with children. To me, a Golden Retriever is the perfect combination of intelligence, playfulness, and love, and I wish I could have one as a furry companion someday!'
+//     },
+//     {
+//         "role": 'user',
+//         "content": 'Mine is my dog Laszlo he\'s a Hungarian Viszla'
+//     },
+//     {
+//         "role": 'assistant',
+//         "content": 'Laszlo sounds great'
+//     },
+// ]
 
 
 // Create prompts and responses
@@ -148,7 +187,11 @@ function generateHTML() {
                         <input type="text" id="message-input">
                         <button id="send-button">Send</button>
                     </div>
+                    <div>
+                        <p>data</p>
+                    </div>
                 </div>
+                
             </body>
         </html>
     `;
